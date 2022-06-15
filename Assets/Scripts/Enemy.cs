@@ -4,21 +4,59 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    private static Enemy instance;
+    public static Enemy Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = GameObject.FindObjectOfType<Enemy>();
+            }
+
+            return instance;
+        }
+    }
+
     private List<Squad> squads = new List<Squad>();
-    private int waive = 1;
+    public List<Squad> Squads => squads;
+
+    public int squadSize;
+    [SerializeField] private Transform[] spawnPoint;
+
+    private int wave = 1;
 
     private void Start()
     {
-        CreateSquad();
+        StartCoroutine(SpawnWaive(wave));
     }
 
-    private void CreateSquad()
+    private IEnumerator SpawnWaive(int waveSize)
+    {
+        while (waveSize > 0)
+        {
+            yield return new WaitForSeconds(1);
+            CreateSquad(squadSize);
+            waveSize--;
+        }
+    }
+
+    private void CreateSquad(int squadSize)
     {
         Squad squad = new Squad();
-        squad.Initialise(FrendlyState.enemy);
         squads.Add(squad);
-        squad.InstantiateUnits(transform.position);
+        squad.Initialise(FrendlyState.enemy, "Paladin", spawnPoint, squadSize);
     }
 
-    
+    public void SquadDestroy(Squad squad)
+    {
+        Squads.Remove(squad);
+
+        if (Squads.Count == 0)
+        {
+            wave++;
+            StartCoroutine(SpawnWaive(wave));
+        }
+    }
+
 }

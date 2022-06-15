@@ -22,16 +22,16 @@ public class UISquadHealthbar : UIIndicator
 
     private void OnEnable()
     {
-        if (SceneIndicator.Target == null) return;
+        //if (SceneIndicator.Target == null) return;
 
-        if (SceneIndicator.Target.TryGetComponent(out UnitHealth healthHandler))
-        {
-            _healthHandler = healthHandler;
-            _slider.value = 1f;
-            _damageBar.fillAmount = 1f;
-            _healthHandler.ActionHealthChanged += UpdateBar;
-            StartCoroutine(FadeIn());
-        }
+        //if (SceneIndicator.Target.TryGetComponent(out UnitHealth healthHandler))
+        //{
+        //    _healthHandler = healthHandler;
+        //    _slider.value = 1f;
+        //    _damageBar.fillAmount = 1f;
+        //    _healthHandler.ActionHealthChanged += UpdateBar;
+        //    StartCoroutine(FadeIn());
+        //}
     }
 
     public void UpdateBar(float health)
@@ -97,8 +97,8 @@ public class UISquadHealthbar : UIIndicator
 
     private void OnDisable()
     {
-        StopAllCoroutines();
-        if (_healthHandler != null)
-            _healthHandler.ActionHealthChanged -= UpdateBar;
+        //StopAllCoroutines();
+        //if (_healthHandler != null)
+        //    _healthHandler.ActionHealthChanged -= UpdateBar;
     }
 }

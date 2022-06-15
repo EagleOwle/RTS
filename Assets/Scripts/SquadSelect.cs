@@ -56,6 +56,8 @@ public class SquadSelect : MonoBehaviour
     {
         foreach (Unit tmp in readyForChange)
         {
+            if (tmp == null) continue;
+
             var pos = Camera.main.WorldToScreenPoint(tmp.transform.position);
             pos.y = InvertY(pos.y);
 

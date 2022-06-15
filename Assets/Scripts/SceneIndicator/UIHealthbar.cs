@@ -11,9 +11,11 @@ public class UIHealthbar : UIIndicator
     [SerializeField] private float _decreaseReducer = .1f;
     [SerializeField] private float _fadeOutTime = .2f;
 
-    private HealthHandler _healthHandler;
+    private SquadHealth _healthHandler;
     private CanvasGroup _canvasGroup;
     private Slider _slider;
+
+    private int targetValue = 0;
 
     private void Awake()
     {
@@ -23,20 +25,22 @@ public class UIHealthbar : UIIndicator
 
     private void OnEnable()
     {
-        if (SceneIndicator.Target == null) return;
+        if (SceneIndicator.Squad == null) return;
 
-        if (SceneIndicator.Target.TryGetComponent(out HealthHandler healthHandler))
-        {
-            _healthHandler = healthHandler;
-            _slider.value = 1f;
-            _damageBar.fillAmount = 1f;
-            _healthHandler.ActionHealthChanged += UpdateBar;
-            StartCoroutine(FadeIn());
-        }
+        _healthHandler = SceneIndicator.Squad.SquadHealth;
+        _slider.maxValue = _healthHandler.maxHealth;
+        //_slider.value = _healthHandler.currentHealth;
+        //_damageBar.fillAmount = _healthHandler.currentHealth;
+        _healthHandler.eventOnChangeHealth.AddListener(SetTargetValue);
+        SetTargetValue(_healthHandler.currentHealth);
+        StartCoroutine(FadeIn());
+
     }
 
-    public void UpdateBar(float health)
+    public void UpdateBar(int health)
     {
+        if (isActiveAndEnabled == false) return;
+
         StopAllCoroutines();
 
         if (health <= 0f)
@@ -96,11 +100,15 @@ public class UIHealthbar : UIIndicator
         }
     }
 
-    private void OnDisable()
+    private void SetTargetValue(int value)
+    {
+        targetValue = value;
+        UpdateBar(targetValue);
+    }
+
+    private void OnDestroy()
     {
         StopAllCoroutines();
-        if (_healthHandler != null)
-            _healthHandler.ActionHealthChanged -= UpdateBar;
     }
 
 }

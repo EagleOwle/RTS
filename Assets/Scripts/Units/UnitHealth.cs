@@ -11,6 +11,9 @@ public class UnitHealth : MonoBehaviour
         set 
         {
             health = value;
+
+            health = Mathf.Clamp(health, 0, 100);
+
             eventOnChangeHealth.Invoke();
         }
 
@@ -22,4 +25,15 @@ public class UnitHealth : MonoBehaviour
 
     public UnityEvent eventOnChangeHealth = new UnityEvent();
 
+    public void Initialise()
+    {
+        Health = UnityEngine.Random.Range(10, 100);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        Health = health - damage;
+    }
+
+    
 }

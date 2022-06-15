@@ -8,12 +8,14 @@ public class SquadHealth
     public SquadHealth(int squadeSize)
     {
         units = new UnitHealth[squadeSize];
+        maxHealth = squadeSize * 100;
     }
 
     public EventChangeHealth eventOnChangeHealth = new EventChangeHealth();
-
+    public int maxHealth;
     public int currentHealth;
     private UnitHealth[] units;
+
     public void AddUnit(UnitHealth unit)
     {
         unit = AddNewUnit(unit);

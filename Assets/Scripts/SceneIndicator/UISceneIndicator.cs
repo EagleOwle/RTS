@@ -4,22 +4,26 @@ using UnityEngine;
 
 public class UISceneIndicator : MonoBehaviour
 {
-    [Header("Название камеры")]
-    [Tooltip("Используется для поиска камеры на сцене. Обьект с данным именем должен содержать компонент Camera")]
     [SerializeField] protected string cameraName = "Main Camera";
-
-    [Header("Отступ от позиции обьекта - цели")]
+    [SerializeField] protected string parentName = "GameCanvas";
     [SerializeField] protected Vector3 offset;
 
-    [Header("Максимальный угол видимости индикатора")]
-    [Tooltip("Угол расчитывается между: Камера - вперед и Камера - данный обьект")]
     [SerializeField] protected float maxAngle;
 
-    [Header("Обьект идикатор, который вкл/выкл")]
     [SerializeField] protected GameObject[] indicatorArrayObj;
 
-    private GameObject target;
-    public GameObject Target => target;
+    private Squad squad;
+    public Squad Squad => squad;
+
+    private GameObject Target
+    {
+        get
+        {
+            if (squad.Capitan == null) return null;
+            
+            return squad.Capitan.gameObject;
+        }
+    }
 
     private bool visible = false;
     protected bool Visible
@@ -50,6 +54,11 @@ public class UISceneIndicator : MonoBehaviour
 
     protected virtual void OnEnable()
     {
+        if(transform.parent == null)
+        {
+            transform.parent = GameObject.Find(parentName).transform;
+        }
+
         foreach (GameObject item in indicatorArrayObj)
         {
             item.SetActive(false);
@@ -61,10 +70,10 @@ public class UISceneIndicator : MonoBehaviour
         Visible = true;
 
         #region Удаляемся, если нет обьекта-цели
-        if (target == null)
+        if (Target == null)
         {
             Visible = false;
-            Destroy(gameObject);
+            //Destroy(gameObject);
             return;
         }
         #endregion
@@ -94,7 +103,7 @@ public class UISceneIndicator : MonoBehaviour
         #endregion
 
         #region Задаем позицию на экране
-        rectTarnsform.position = currentCamera.WorldToScreenPoint(target.transform.position + offset);
+        rectTarnsform.position = currentCamera.WorldToScreenPoint(Target.transform.position + offset);
         #endregion
 
     }
@@ -106,13 +115,13 @@ public class UISceneIndicator : MonoBehaviour
             return false;
         }
 
-        if (target == null)
+        if (Target == null)
         {
             return false;
         }
 
         Vector3 to = currentCamera.transform.forward;
-        Vector3 from = target.transform.position - currentCamera.transform.position;
+        Vector3 from = Target.transform.position - currentCamera.transform.position;
 
         if (Vector3.Angle(from, to) > maxAngle)
         {
@@ -122,9 +131,9 @@ public class UISceneIndicator : MonoBehaviour
         return true;
     }
 
-    public void SetTarget(GameObject obj)
+    public void SetTarget(Squad value)
     {
-        target = obj;
+        squad = value;
 
         foreach (GameObject item in indicatorArrayObj)
         {

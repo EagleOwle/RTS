@@ -11,7 +11,7 @@ public class SceneIndicatorTarget : MonoBehaviour
 
     private void CreateIndicator()
     {
-        UISceneIndicatorManager.Instance.AddTarget(this);
+        //UISceneIndicatorManager.Instance.AddTarget(this);
     }
 
 }
